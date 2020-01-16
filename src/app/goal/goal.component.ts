@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { GoalService } from '../goal-service/goal.service';
 import { Goal } from '../goal';
 import { AlertService } from '../alert-service/alert.service';
-import { HttpClient } from '@angular/common/http'
-import { Quote } from '../quote-class/quote'
+import { Quote } from '../quote-class/quote';
 import { QuoteRequestService } from '../quote-http/quote-request.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-goal',
@@ -19,7 +19,7 @@ export class GoalComponent implements OnInit {
   
   
 
-  constructor(alertService:AlertService,private goalService:GoalService,private quoteService:QuoteRequestService) {
+  constructor(private router:Router,alertService:AlertService,private goalService:GoalService,private quoteService:QuoteRequestService) {
     this.alertService = alertService;
   }
   getGoals(): void {
@@ -35,14 +35,12 @@ export class GoalComponent implements OnInit {
       this.goals.splice(index,1);
     }
   }
-  deleteGoal(isComplete, index){
-    if (isComplete) {
-      let toDelete = confirm(`Are you sure you want to delete ${this.goals[index].name}?`)
+  deleteGoal(index){
+    let toDelete = confirm(`Are you sure you want to delete ${this.goals[index].name}`)
 
-      if (toDelete){
-        this.goals.splice(index,1);
-        this.alertService.alertMe("The goal has been deleted");
-      }
+    if (toDelete){
+      this.goals.splice(index,1)
+      this.alertService.alertMe("Goal has been deleted")
     }
   }
   
@@ -51,6 +49,10 @@ export class GoalComponent implements OnInit {
     goal.id = goalLength+1;
     goal.completeDate = new Date(goal.completeDate)
     this.goals.push(goal)
+  }
+
+  goToUrl(id){
+    this.router.navigate(['/goals',id])
   }
 
   ngOnInit() {
